@@ -56,9 +56,27 @@ under the License.
 			<version>${project.version}</version>
 		</dependency>
 
+                <dependency>
+                        <groupId>org.apache.flink</groupId>
+                        <artifactId>flink-shaded-hadoop2</artifactId>
+                        <version>${project.version}</version>
+                </dependency>
+
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-kafka-0.10_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-filesystem_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-hadoop-compatibility_${scala.binary.version}</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -515,6 +533,8 @@ under the License.
 									<includes>
 										<include>org/apache/flink/streaming/examples/kafka/**</include>
 										<include>org/apache/flink/streaming/**</include>
+										<include>org/apache/flink/hadoopcompatibility/**</include>
+										<include>org/apache/flink/api/**</include>
 										<include>org/apache/kafka/**</include>
 										<include>org/apache/curator/**</include>
 										<include>org/apache/zookeeper/**</include>

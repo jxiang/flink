@@ -20,11 +20,18 @@ package org.apache.flink.streaming.examples.kafka;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.connectors.fs.SequenceFileWriter;
+import org.apache.flink.streaming.connectors.fs.bucketing.BucketingSink;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 
 
 /**
@@ -66,11 +73,16 @@ public class Kafka010Example {
 						parameterTool.getProperties()))
 				.map(new PrefixingMapper(prefix));
 
-		input.addSink(
+		BucketingSink<Tuple2<Text, IntWritable>> sink = new BucketingSink<>("file:///tmp/seq.txt");
+		sink.setWriter(new SequenceFileWriter<Text, IntWritable>());
+		input.map(x -> new Tuple2<Text, IntWritable>(new Text(x), new IntWritable(1))).returns(
+				new TypeHint<Tuple2<Text, IntWritable>>() {}).addSink(sink);
+
+		/*input.addSink(
 				new FlinkKafkaProducer010<>(
 						parameterTool.getRequired("output-topic"),
 						new SimpleStringSchema(),
-						parameterTool.getProperties()));
+						parameterTool.getProperties()));*/
 
 		env.execute("Kafka 0.10 Example");
 	}
